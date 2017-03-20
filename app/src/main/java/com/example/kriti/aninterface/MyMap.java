@@ -15,6 +15,7 @@ import android.view.View;
 /**
  * Created by harshit on 2/3/17.
  */
+
 public class MyMap extends View {
 
     Context context;
