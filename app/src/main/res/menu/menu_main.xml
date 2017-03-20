@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_nav"
+        android:title="About"
+        android:icon="@mipmap/ic_launcher_nav"
+
+        />
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="Language Options"
+        app:showAsAction="never"
+
+        />
+
+</menu>

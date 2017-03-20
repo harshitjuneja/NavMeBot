@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:background="@color/colorPrimary">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Spinner
+            android:id="@+id/fromSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:hint="From"
+            android:textColorHint="@color/colorAccent"
+            android:layout_marginTop="80dp"
+            android:layout_marginRight="50dp">
+        </Spinner>
+
+
+        <Spinner
+            android:id="@+id/toSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="To"
+            android:layout_marginRight="50dp"
+            android:textColorHint="@color/colorAccent">
+        </Spinner>
+
+        <ImageButton
+            android:id="@+id/navigatebutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher_direction"
+            android:background="#00000000"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="150dp" />
+
+        <ImageButton
+            android:id="@+id/mylocbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher_loc"
+            android:background="#00000000"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="290dp"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.Toolbar>
