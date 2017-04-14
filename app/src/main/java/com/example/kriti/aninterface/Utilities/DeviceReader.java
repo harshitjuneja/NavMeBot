@@ -1,11 +1,12 @@
 package com.example.kriti.aninterface.Utilities;
 
+import android.os.Environment;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 /**
  * Created by harshit on 19/2/17.
@@ -15,76 +16,43 @@ public class DeviceReader {
 
     private String path;
     private String file;
-    private String line;
-    private FileInputStream fis;
-    private InputStreamReader isr;
-    private BufferedReader in;
 
-    /**
-     * Constructor with no specified file.
-     * The default file location is /sdcard/samples.txt
-     */
-
-    public DeviceReader() {
-        path = new String("/sdcard/");
-        file = new String("samples.txt");
-        initialize();
+    public DeviceReader(String filename) throws IOException {
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        this.path = dir.getAbsolutePath();
+        Log.w("TAGU",this.path);
+        this.file = filename;
     }
 
-    public DeviceReader(String s) {
+    public boolean is_ExternalStorageWriteable(){
+        String state = Environment.getExternalStorageState();
+        Log.w("TAGU", "DeviceReader: "+state);
+        if (state.equals(Environment.MEDIA_MOUNTED)) return true;
+        else return false;
+    }
 
-        if (s.contains("/")) {
-            this.path = s.substring(0, s.lastIndexOf("/") + 1);
-            this.file = s.substring(s.lastIndexOf("/") + 1);
-        } else {
-            this.path = "/sdcard/";
-            this.file = s;
+    public String initialize() throws IOException {
+        String line="";
+        String content="";
+        File file = new File(new String(this.path + File.separator + this.file));
+        if (!file.exists()){
+            file.mkdirs();
+            Log.w("TAGU","new file created in document");
         }
-        initialize();
-    }
-    /**
-     * Write a string to the specified file
-     */
-    public String readln() {
-        try {
-            this.line = in.readLine();
-        } catch (IOException e) {}
-        return this.line;
-    }
-    /**
-     * Close the file
-     */
-    public void close() {
-        try {
-            this.in.close();
-            this.isr.close();
-            this.fis.close();
-        } catch (IOException e) {}
-    }
-    /**
-     * Initialize the output stream in order to write
-     * to the specified file.
-     */
-    private void initialize() {
-        File f = new File(new String(this.path + this.file));
-        try {
-            this.fis = new FileInputStream(f);
-        } catch (FileNotFoundException e) {
+        else {
+            Log.w("TAGU","file exists");
+            BufferedReader bufferedReader;
+            bufferedReader = new BufferedReader(new FileReader(file));
+            while ((line = bufferedReader.readLine())!=null){
+                content += line;
+            }
+            Log.w("TAGU",content);
+            return content;
         }
-        this.isr = new InputStreamReader(this.fis);
-        this.in = new BufferedReader(isr);
+
+        Log.w("TAGU",file.getCanonicalPath());
+        return null;
     }
-
-
-    public String toString() {
-        return new String(this.path + this.file);
-    }
-
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
 
     public void setFileName(String fileName) {
         this.file = fileName;
@@ -94,9 +62,7 @@ public class DeviceReader {
         return this.path;
     }
 
-
-    public String getFileName() {
+    public String getFileName(){
         return this.file;
     }
-
 }

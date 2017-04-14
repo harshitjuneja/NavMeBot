@@ -219,7 +219,4 @@ public class Util {
         return inside(p[0], p[1], left, top, right, bottom);
 
     }
-
-
-
 }
