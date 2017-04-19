@@ -20,37 +20,36 @@ public class DeviceReader {
     public DeviceReader(String filename) throws IOException {
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
         this.path = dir.getAbsolutePath();
-        Log.w("TAGU",this.path);
+        Log.w("TAGU", this.path);
         this.file = filename;
     }
 
-    public boolean is_ExternalStorageWriteable(){
+    public boolean is_ExternalStorageWriteable() {
         String state = Environment.getExternalStorageState();
-        Log.w("TAGU", "DeviceReader: "+state);
+        Log.w("TAGU", "DeviceReader: " + state);
         if (state.equals(Environment.MEDIA_MOUNTED)) return true;
         else return false;
     }
 
     public String initialize() throws IOException {
-        String line="";
-        String content="";
+        String line = "";
+        String content = "";
         File file = new File(new String(this.path + File.separator + this.file));
-        if (!file.exists()){
+        if (!file.exists()) {
             file.mkdirs();
-            Log.w("TAGU","new file created in document");
-        }
-        else {
-            Log.w("TAGU","file exists");
+            Log.w("TAGU", "new file created in document");
+        } else {
+            Log.w("TAGU", "file exists");
             BufferedReader bufferedReader;
             bufferedReader = new BufferedReader(new FileReader(file));
-            while ((line = bufferedReader.readLine())!=null){
+            while ((line = bufferedReader.readLine()) != null) {
                 content += line;
             }
-            Log.w("TAGU",content);
+            Log.w("TAGU", content);
             return content;
         }
 
-        Log.w("TAGU",file.getCanonicalPath());
+        Log.w("TAGU", file.getCanonicalPath());
         return null;
     }
 
@@ -62,7 +61,7 @@ public class DeviceReader {
         return this.path;
     }
 
-    public String getFileName(){
+    public String getFileName() {
         return this.file;
     }
 }

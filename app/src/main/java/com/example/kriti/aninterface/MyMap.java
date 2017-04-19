@@ -65,6 +65,10 @@ public class MyMap extends View {
         }
     }
 
+    public void drawLine(Canvas canvas){
+
+    }
+
     class BitmapDecoder extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -74,7 +78,7 @@ public class MyMap extends View {
         }
 
         Bitmap getBitmap(){
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.collegep);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.hall);
             return Bitmap.createScaledBitmap(bitmap,WIDTH,HEIGHT,true);
             //return bitmap;
         }

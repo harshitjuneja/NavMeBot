@@ -10,7 +10,7 @@
         android:orientation="vertical">
 
         <Spinner
-            android:id="@+id/fromSpinner"
+            android:id="@+id/toSpinner"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:hint="From"
@@ -21,7 +21,7 @@
 
 
         <Spinner
-            android:id="@+id/toSpinner"
+            android:id="@+id/fromSpinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="To"

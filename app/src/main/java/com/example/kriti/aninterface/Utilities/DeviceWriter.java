@@ -35,14 +35,12 @@ public class DeviceWriter {
         initialize();
     }
 
-
     public DeviceWriter(String s){
 
             f = getFileDirectory(c.getApplicationContext(),"navmebot");
             this.path = f.getAbsolutePath();
             this.fileName ="samples.txt";
             initialize();
-
     }
 
     public File getFileDirectory(Context context,String dirname){
@@ -75,12 +73,6 @@ public class DeviceWriter {
     public String toString() {
         return new String(this.path + this.fileName);
         }
-
-    /*
-    * Initialize : writes to specified files
-    *
-    */
-
 
     private void initialize() {
         File f = new File(new String(this.path +"/"+ this.fileName));

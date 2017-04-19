@@ -6,7 +6,6 @@ package com.example.kriti.aninterface.Utilities;
 
 public class Util {
 
-
     public static boolean[] highest(int[] a, int count) {
         int size = a.length;
         boolean[] highest = new boolean[size];
