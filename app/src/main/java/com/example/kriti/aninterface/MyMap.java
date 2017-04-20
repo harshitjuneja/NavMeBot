@@ -27,8 +27,14 @@ public class MyMap extends View {
     Context context;
     Bitmap imageBitmap;
     Paint paint;
+    Paint paintCircle;
     int WIDTH, HEIGHT;
     ArrayList<Node> mapData;
+    Node location;
+
+    public void setLocation(Node location1){
+        this.location = location1;
+    }
 
     public void setMapData(ArrayList<Node> mapData){
         this.mapData = mapData;
@@ -55,8 +61,14 @@ public class MyMap extends View {
         this.context = context;
         paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(ContextCompat.getColor(context, android.R.color.holo_orange_light));
+        paint.setColor(ContextCompat.getColor(context, android.R.color.holo_blue_dark));
         paint.setStrokeWidth(15f);
+
+
+        paintCircle = new Paint();
+        paintCircle.setStyle(Paint.Style.STROKE);
+        paintCircle.setColor(ContextCompat.getColor(context, android.R.color.holo_blue_bright));
+        paintCircle.setStrokeWidth(5f);
     }
 
     @Override
@@ -80,7 +92,13 @@ public class MyMap extends View {
                 Node n1 = mapData.get(i);
                 Node n2 = mapData.get(i+1);
                 canvas.drawLine(n1.getX(), n1.getY(), n2.getX(), n2.getY(), paint);
+                canvas.drawCircle(n1.getX(),n1.getY(),50f,paintCircle);
+
             }
+        }
+        if (location!=null){
+            canvas.drawCircle(location.getX(),location.getY(),40f,paintCircle);
+            canvas.drawPoint(location.getX(),location.getY(),paint);
         }
     }
 

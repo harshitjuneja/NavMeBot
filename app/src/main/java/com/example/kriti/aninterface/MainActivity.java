@@ -217,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
             Log.w("TAGU", "storage available");
         }
 
-
     }
 
 
@@ -276,6 +275,8 @@ public class MainActivity extends AppCompatActivity {
     public void foundPosition(Node node) {
         Toast.makeText(getApplicationContext(), "Found " + node.getX() + " " + node.getY(), Toast.LENGTH_LONG).show();
         Log.w("MY_APP", Integer.toString(node.getX()) +" "+ Integer.toString(node.getY()));
+        mapView.setLocation(node);
+        mapView.invalidate();
     }
 
     public void compare(ArrayList<ScanResult> arrayList) {
