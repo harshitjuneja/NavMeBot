@@ -1,5 +1,8 @@
 package com.example.kriti.aninterface;
 
+import android.content.Context;
+import android.graphics.Canvas;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.example.kriti.aninterface.Utilities.Node;
@@ -14,7 +17,6 @@ public class Route {
 
     final int INT_MAX;
     int V;
-    int path[];
     Node node0;
     Node node1;
     Node node2;
@@ -36,33 +38,38 @@ public class Route {
     Node node18;
     Node node19;
     ArrayList<String> arrayList;
+    MyMap myMap;
+    Context context;
+    Canvas canvas;
 
 
-    public Route() {
+
+    public Route(MyMap map) {
         V = 20;
         INT_MAX = Integer.MAX_VALUE;
 
-        node0 = new Node(100, 600);
-        node1 = new Node(350, 600);
-        node2 = new Node(550, 600);
-        node3 = new Node(850, 600);
-        node4 = new Node(100, 900);
-        node5 = new Node(350, 900);
-        node6 = new Node(550, 900);
-        node7 = new Node(850, 900);
-        node8 = new Node(100, 1200);
-        node9 = new Node(350, 1200);
-        node10 = new Node(550, 1200);
-        node11 = new Node(850, 1200);
-        node12 = new Node(100, 1500);
-        node13 = new Node(350, 1500);
-        node14 = new Node(550, 1500);
-        node15 = new Node(850, 1500);
-        node16 = new Node(100, 1800);
-        node17 = new Node(350, 1800);
-        node18 = new Node(550, 1800);
-        node19 = new Node(850, 1800);
-        arrayList = new ArrayList<String>();
+        this.myMap = map;
+        this.node0 = new Node(110, 138);
+        this.node1 = new Node(355, 138);
+        this.node2 = new Node(610, 138);
+        this.node3 = new Node(986, 138);
+        this.node4 = new Node(110, 454);
+        this.node5 = new Node(355, 454);
+        this.node6 = new Node(610, 454);
+        this.node7 = new Node(986, 454);
+        this.node8 = new Node(110, 757);
+        this.node9 = new Node(355, 757);
+        this.node10 = new Node(610, 757);
+        this.node11 = new Node(986, 757);
+        this.node12 = new Node(110, 1070);
+        this.node13 = new Node(355, 1070);
+        this.node14 = new Node(610, 1070);
+        this.node15 = new Node(986, 1070);
+        this.node16 = new Node(110, 1331);
+        this.node17 = new Node(355, 1331);
+        this.node18 = new Node(610, 1331);
+        this.node19 = new Node(986, 1331);
+        this.arrayList = new ArrayList<String>();
     }
 
     int min_Distance(int dist[], boolean sptSet[]) {
@@ -124,9 +131,76 @@ public class Route {
         printSolution(dist, V, parent, src, destination);
     }
 
+    Node getRealNodeObject(String number) {
+
+        switch (number) {
+            case "0":
+                return node0;
+            case "1":
+                return node1;
+            case "2":
+                return node2;
+            case "3":
+                return node3;
+            case "4":
+                return node4;
+            case "5":
+                return node5;
+            case "6":
+                return node6;
+            case "7":
+                return node7;
+            case "8":
+                return node8;
+            case "9":
+                return node9;
+            case "10":
+                return node10;
+            case "11":
+                return node11;
+            case "12":
+                return node12;
+            case "13":
+                return node13;
+            case "14":
+                return node14;
+            case "15":
+                return node15;
+            case "16":
+                return node16;
+            case "17":
+                return node17;
+            case "18":
+                return node18;
+            case "19":
+                return node19;
+            default:
+                return null;
+        }
+    }
+
     void drawRouteOnScreen(int source) {
+        arrayList.add(0, Integer.toString(source));
+        ArrayList<Node> mapData = new ArrayList<>();
+        for(int i = 0 ; i < arrayList.size(); ++i){
+            Node n = getRealNodeObject(arrayList.get(i).toString());
+            mapData.add(n);
+        }
 
-
+        myMap.setMapData(mapData);
+        myMap.invalidate();
+        for (int i=0;i<arrayList.size();i++){
+            Log.w("AL elements",arrayList.get(i).toString());
+        }
+//        for (int i = 0, j = i+1; i < (arrayList.size() - 1) && j < arrayList.size(); i++, j++) {
+//            Log.w("nodei",arrayList.get(i).toString());
+//            Log.w("nodej",arrayList.get(j).toString());
+//            Node n1 = getRealNodeObject(arrayList.get(i).toString());
+//            Node n2 = getRealNodeObject(arrayList.get(j).toString());
+//            myMap.setN1(n1);
+//            myMap.setN2(n2);
+//            myMap.invalidate();
+//        }
         arrayList.clear();
     }
 }

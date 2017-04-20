@@ -1,16 +1,22 @@
-package com.example.kriti.aninterface;
+ package com.example.kriti.aninterface;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+
 import android.graphics.Paint;
+
 import android.os.AsyncTask;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+
+import com.example.kriti.aninterface.Utilities.Node;
+
+import java.util.ArrayList;
 
 /**
  * Created by harshit on 2/3/17.
@@ -22,6 +28,11 @@ public class MyMap extends View {
     Bitmap imageBitmap;
     Paint paint;
     int WIDTH, HEIGHT;
+    ArrayList<Node> mapData;
+
+    public void setMapData(ArrayList<Node> mapData){
+        this.mapData = mapData;
+    }
 
     public MyMap(Context context) {
         super(context);
@@ -38,13 +49,14 @@ public class MyMap extends View {
         init(context);
     }
 
-    private void init(Context context){
+
+    private void init(Context context) {
 
         this.context = context;
         paint = new Paint();
-        paint.setColor(ContextCompat.getColor(context, android.R.color.black));
-
-
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(ContextCompat.getColor(context, android.R.color.holo_orange_light));
+        paint.setStrokeWidth(15f);
     }
 
     @Override
@@ -57,17 +69,27 @@ public class MyMap extends View {
 
 
     @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if (imageBitmap != null) {
+            canvas.drawBitmap(imageBitmap, 0f, 0f, null);
+        }
 
-        if(imageBitmap!=null){
-            canvas.drawBitmap(imageBitmap,0f,0f,null);
+        if(mapData!=null){
+            for(int i = 0 ; i < mapData.size()-1; ++i){
+                Node n1 = mapData.get(i);
+                Node n2 = mapData.get(i+1);
+                canvas.drawLine(n1.getX(), n1.getY(), n2.getX(), n2.getY(), paint);
+            }
         }
     }
 
-    public void drawLine(Canvas canvas){
 
-    }
+  /*  @Override
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
+*/
+
 
     class BitmapDecoder extends AsyncTask<Void, Void, Void> {
 
@@ -77,19 +99,25 @@ public class MyMap extends View {
             return null;
         }
 
-        Bitmap getBitmap(){
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.hall);
-            return Bitmap.createScaledBitmap(bitmap,WIDTH,HEIGHT,true);
+        Bitmap getBitmap() {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hall);
+            return Bitmap.createScaledBitmap(bitmap, WIDTH, HEIGHT, true);
             //return bitmap;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Log.d("MY_APP","Drawable done");
+            Log.d("MY_APP", "Drawable done");
             Log.d("MY_APP", WIDTH + " " + HEIGHT);
 
             invalidate();
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        Log.w("TOUCH",event.getX() + " " + event.getY());
+        return super.onTouchEvent(event);
     }
 }

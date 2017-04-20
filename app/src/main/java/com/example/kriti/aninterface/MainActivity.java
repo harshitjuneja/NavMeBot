@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.example.kriti.aninterface.Utilities.DeviceReader;
 import com.example.kriti.aninterface.Utilities.DeviceWriter;
+import com.example.kriti.aninterface.Utilities.Node;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -75,11 +76,17 @@ public class MainActivity extends AppCompatActivity {
     String[] To = {"Stall 1", "Stall 2", "Stall 3", "Stall 4", "Stall 5", "Stall 6"};
     String fromValue, toValue;
     String glassReadings = null, pillarReadings = null, doorReadings = null, switchReadings = null;
+    String[] glassR, pillarR, doorR, swichR;
+    int glass[][] = new int[7][9];
+    int door[][] = new int[7][9];
+    int swich[][] = new int[7][9];
+    int pillar[][] = new int[7][9];
     DeviceWriter deviceWriter;
     Route route;
     Spinner fromSpinner;
     int destination = 0;
     int source = 0;
+    Node node;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
@@ -89,11 +96,12 @@ public class MainActivity extends AppCompatActivity {
 
         mapView = (MyMap) findViewById(R.id.canvas);
         tb = (Toolbar) findViewById(R.id.toolbar);
-        goDirect= (ImageButton) findViewById(R.id.navigatebutton);
+        goDirect = (ImageButton) findViewById(R.id.navigatebutton);
 
         setSupportActionBar(tb);
         getSupportActionBar().setTitle("");
         mContext = this;
+
         fromSpinner = (Spinner) findViewById(R.id.fromSpinner);
         final ArrayAdapter<String> fromAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, From);
         fromAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -145,18 +153,30 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        route = new Route();
+        route = new Route(mapView);
 
         goDirect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                route.routing(graph,source,destination);
+                route.routing(graph, source, destination);
+                route.drawRouteOnScreen(source);
+
             }
         });
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiAccess = new WifiAccess();
 
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED |
+                        checkSelfPermission(Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED |
+                        checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.ACCESS_COARSE_LOCATION}, 0x12345);
+        } else {
+            getSignalStrength();
+        }
 
         try {
             deviceReader = new DeviceReader("glass.txt");
@@ -173,26 +193,36 @@ public class MainActivity extends AppCompatActivity {
             Log.w("TAGU", "vailable");
         }
 
-        /*boolean res = deviceReader.is_ExternalStorageWriteable();
+
+        glassR = glassReadings.split(" ");
+        doorR = doorReadings.split(" ");
+        swichR = switchReadings.split(" ");
+        pillarR = pillarReadings.split(" ");
+        try {
+
+            for (int i = 0; i < 7; i++) {
+                for (int j = 0; j < 9; j++) {
+                    glass[i][j] = Integer.parseInt(glassR[9 * i + j]);
+                    door[i][j] = Integer.parseInt(doorR[9 * i + j]);
+                    swich[i][j] = Integer.parseInt(swichR[9 * i + j]);
+                    pillar[i][j] = Integer.parseInt(pillarR[9 * i + j]);
+                }
+            }
+        } catch (NumberFormatException e) {
+        }
+
+
+        boolean res = deviceReader.is_ExternalStorageWriteable();
         if (res == true) {
             Log.w("TAGU", "storage available");
-        }*/
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED |
-                        checkSelfPermission(Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED |
-                        checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.ACCESS_COARSE_LOCATION}, 0x12345);
-        } else {
-            getSignalStrength();
         }
+
+
     }
 
 
     private void updateDestination(String toValue) {
-        Log.w("MY_APP", "Called " + toValue);
+        Log.w("Dest", "Called " + toValue);
 
         switch (toValue) {
             case "Stall 1":
@@ -218,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateSource(String fromValue) {
 
-        Log.w("MY_APP", "Called " + fromValue);
+        Log.w("Source", "Called " + fromValue);
 
         switch (fromValue) {
             case "Stall 1":
@@ -243,71 +273,92 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-    public void foundPosition(int i, int j) {
-        Log.w(Integer.toString(i), Integer.toString(j));
+    public void foundPosition(Node node) {
+        Toast.makeText(getApplicationContext(), "Found " + node.getX() + " " + node.getY(), Toast.LENGTH_LONG).show();
+        Log.w("MY_APP", Integer.toString(node.getX()) +" "+ Integer.toString(node.getY()));
     }
 
     public void compare(ArrayList<ScanResult> arrayList) {
         ScanResult scanGlass = null, scanDoor = null, scanSwich = null, scanPillar = null;
-        int glass[][] = new int[7][9];
-        int door[][] = new int[7][9];
-        int swich[][] = new int[7][9];
-        int pillar[][] = new int[7][9];
-
-        String glassR[] = glassReadings.split(" ");
-        String doorR[] = doorReadings.split(" ");
-        String swichR[] = switchReadings.split(" ");
-        String pillarR[] = pillarReadings.split(" ");
-
-        try {
-
-            for (int i = 0; i < 7; i++) {
-                for (int j = 0; j < 9; j++) {
-                    glass[i][j] = Integer.parseInt(glassR[9 * i + j]);
-                    door[i][j] = Integer.parseInt(doorR[9 * i + j]);
-                    swich[i][j] = Integer.parseInt(swichR[9 * i + j]);
-                    pillar[i][j] = Integer.parseInt(pillarR[9 * i + j]);
-                }
-            }
-        } catch (NumberFormatException e) {
-        }
 
         try {
             for (int i = 0; i < arrayList.size(); i++) {
                 if (arrayList.get(i).SSID.equalsIgnoreCase("glass")) {
                     scanGlass = arrayList.get(i);
+                    if (scanGlass == null) Log.w("MY_APP", "scanGlass null");
+                    //  Log.w("MY_APP","Scan Glass found");
                 } else if (arrayList.get(i).SSID.equalsIgnoreCase("door")) {
                     scanDoor = arrayList.get(i);
+                    //  Log.w("MY_APP","Scan Door found");
                 } else if (arrayList.get(i).SSID.equalsIgnoreCase("switch")) {
                     scanSwich = arrayList.get(i);
+                    // Log.w("MY_APP","Scan Switch found");
                 } else if (arrayList.get(i).SSID.equalsIgnoreCase("pillar")) {
                     scanPillar = arrayList.get(i);
+                    //  Log.w("MY_APP","Scan Pillar found");
                 }
             }
         } catch (IndexOutOfBoundsException e) {
         }
+        if (scanGlass == null || scanDoor == null || scanPillar == null || scanSwich == null) {
+            Toast.makeText(getApplicationContext(), "All wifi not available", Toast.LENGTH_SHORT).show();
+        } else {
+            scanGlass.level *= -1;
+            scanDoor.level *= -1;
+            scanPillar.level *= -1;
+            scanSwich.level *= -1;
+
+            if (scanPillar.level >= -50 && scanPillar.level <= -65 && scanDoor.level >= -50 && scanDoor.level <= -65) {
+                if (scanSwich.level > scanGlass.level) {
+                    if (scanPillar.level > scanDoor.level) foundPosition(new Node(355, 454));
+                    else foundPosition(new Node(610, 454));
+                } else {
+                    if (scanPillar.level > scanDoor.level) foundPosition(new Node(355, 1070));
+                    else foundPosition(new Node(610, 1070));
+                }
+            } else {
+                if (scanPillar.level > scanDoor.level) {
+                    if (scanSwich.level > scanGlass.level) foundPosition(new Node(110, 454));
+                    else foundPosition(new Node(110, 1070));
+                } else {
+                    if (scanSwich.level > scanGlass.level) foundPosition(new Node(986, 454));
+                    else foundPosition(new Node(986, 1070));
+                }
+            }
+
+        /*
 
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 9; j++) {
-                if (glass[i][j] >= scanGlass.level - 3 && glass[i][j] <= scanGlass.level + 3 &&
-                        door[i][j] >= scanDoor.level - 3 && door[i][j] <= scanDoor.level + 3 &&
-                        swich[i][j] >= scanSwich.level - 3 && swich[i][j] <= scanSwich.level + 3 &&
-                        pillar[i][j] >= scanPillar.level - 3 && pillar[i][j] >= scanPillar.level + 3)
+                Log.w("MY_APP",glass[i][j] + " : " + scanGlass.level);
+                Log.w("MY_APP",door[i][j] + " : " + scanDoor.level);
+                Log.w("MY_APP",swich[i][j] + " : " + scanSwich.level);
+                Log.w("MY_APP",pillar[i][j] + " : " + scanPillar.level);
+                scanGlass.level*=-1;
+                scanDoor.level*=-1;
+                scanPillar.level*=-1;
+                scanSwich.level*=-1;
+                if (glass[i][j] >= scanGlass.level -5  && glass[i][j] <= scanGlass.level + 5 &&
+                        door[i][j] >= scanDoor.level - 5 && door[i][j] <= scanDoor.level + 5 &&
+                        swich[i][j] >= scanSwich.level - 5 && swich[i][j] <= scanSwich.level + 5 &&
+                        pillar[i][j] >= scanPillar.level - 5 && pillar[i][j] <= scanPillar.level + 5) {
                     foundPosition(i, j);
-                else Log.w("position", "not found");
+                }
+                else {Log.w("position", "not found");}
             }
         }
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            getSignalStrength();
+        */
         }
     }
+
+
+        @Override
+        public void onRequestPermissionsResult ( int requestCode, String[] permissions,
+        int[] grantResults){
+            if (requestCode == 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getSignalStrength();
+            }
+        }
 
 
     protected void onStop() {
